@@ -7,10 +7,15 @@ import com.star.app.screen.ScreenManager;
 public class Bullet implements Poolable {
     private Vector2 position;
     private Vector2 velocity;
+    private float angle;
     private boolean active;
 
     public Vector2 getPosition() {
         return position;
+    }
+
+    public float getAngle() {
+        return angle;
     }
 
     @Override
@@ -28,10 +33,11 @@ public class Bullet implements Poolable {
         this.active = false;
     }
 
-    public void activate(float x, float y, float vx, float vy) {
-        position.set(x, y);
-        velocity.set(vx, vy);
-        active = true;
+    public void activate(float x, float y, float vx, float vy, float angle) {
+        this.position.set(x, y);
+        this.velocity.set(vx, vy);
+        this.active = true;
+        this.angle = angle;
     }
 
     public void update(float dt) {
