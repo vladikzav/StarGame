@@ -41,6 +41,10 @@ public class Asteroid implements Poolable {
         return velocity;
     }
 
+    public float getScale() {
+        return scale;
+    }
+
     @Override
     public boolean isActive() {
         return active;
@@ -63,9 +67,6 @@ public class Asteroid implements Poolable {
         hp -= amount;
         if (hp <= 0) {
             deactivate();
-            if(MathUtils.random(0, 1000)<1000) {
-                gc.getPowerUpController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), MathUtils.random(0, 1));
-            }
             if (scale > 0.9f) {
                 gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f);
                 gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f);

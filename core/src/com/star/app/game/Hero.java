@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
+import com.star.app.screen.utils.OptionsUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +20,10 @@ import java.util.List;
 public class Hero {
     private GameController gc;
     private TextureRegion texture;
+    private KeysControl keysControl;
     private Vector2 position;
     private Vector2 velocity;
     private int hp;
-    private int maxHp;
     private float angle;
     private float enginePower;
     private float fireTimer;
@@ -30,6 +31,7 @@ public class Hero {
     private int scoreView;
     private Circle hitArea;
     private Weapon currentWeapon;
+    private int money;
 
     public float getAngle() {
         return angle;
@@ -39,10 +41,6 @@ public class Hero {
 
     public void addScore(int amount) {
         score += amount;
-    }
-
-    public Weapon getCurrentWeapon() {
-        return currentWeapon;
     }
 
     public int getScore() {
@@ -61,29 +59,24 @@ public class Hero {
         return hitArea;
     }
 
-    public Hero(GameController gc) {
+    public Hero(GameController gc, String keysControlPrefix) {
         this.gc = gc;
         this.texture = Assets.getInstance().getAtlas().findRegion("ship");
         this.position = new Vector2(640, 360);
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
         this.enginePower = 750.0f;
-        this.maxHp = 100;
-        this.hp = maxHp;
+        this.hp = 100;
         this.strBuilder = new StringBuilder();
         this.hitArea = new Circle(position, 26.0f);
-
-        List<Vector3> list = new ArrayList<>();
-        for (int i = 0; i < 11; i++) {
-            list.add(new Vector3(28, -90 + 18 * i, -90 + 18 * i));
-        }
+        this.keysControl = new KeysControl(OptionsUtils.loadProperties(), keysControlPrefix);
 
         this.currentWeapon = new Weapon(
-                gc, this, "Laser", 0.2f, 1, 600.0f, 100,
+                gc, this, "Laser", 0.2f, 1, 600.0f, 320,
                 new Vector3[]{
                         new Vector3(28, 0, 0),
-                        new Vector3(28, 90, 90),
-                        new Vector3(28, -90, -90)
+                        new Vector3(28, 90, 20),
+                        new Vector3(28, -90, -20)
                 }
         );
     }
@@ -95,6 +88,7 @@ public class Hero {
     public void renderGUI(SpriteBatch batch, BitmapFont font) {
         strBuilder.clear();
         strBuilder.append("SCORE: ").append(scoreView).append("\n");
+        strBuilder.append("MONEY: ").append(money).append("\n");
         strBuilder.append("HP: ").append(hp).append("\n");
         strBuilder.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
         font.draw(batch, strBuilder, 20, 700);
@@ -104,20 +98,20 @@ public class Hero {
         fireTimer += dt;
         updateScore(dt);
 
-        if (Gdx.input.isKeyPressed(Input.Keys.P)) {
+        if (Gdx.input.isKeyPressed(keysControl.fire)) {
             tryToFire();
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+        if (Gdx.input.isKeyPressed(keysControl.left)) {
             angle += 180.0f * dt;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+        if (Gdx.input.isKeyPressed(keysControl.right)) {
             angle -= 180.0f * dt;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+        if (Gdx.input.isKeyPressed(keysControl.forward)) {
             velocity.x += (float) Math.cos(Math.toRadians(angle)) * enginePower * dt;
             velocity.y += (float) Math.sin(Math.toRadians(angle)) * enginePower * dt;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+        if (Gdx.input.isKeyPressed(keysControl.backward)) {
             velocity.x -= (float) Math.cos(Math.toRadians(angle)) * enginePower * dt / 2.0f;
             velocity.y -= (float) Math.sin(Math.toRadians(angle)) * enginePower * dt / 2.0f;
         }
@@ -132,7 +126,7 @@ public class Hero {
             float bx, by;
             bx = position.x - 28.0f * (float) Math.cos(Math.toRadians(angle));
             by = position.y - 28.0f * (float) Math.sin(Math.toRadians(angle));
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 2; i++) {
                 gc.getParticleController().setup(
                         bx + MathUtils.random(-4, 4), by + MathUtils.random(-4, 4),
                         velocity.x * -0.3f + MathUtils.random(-20, 20), velocity.y * -0.3f + MathUtils.random(-20, 20),
@@ -148,12 +142,6 @@ public class Hero {
 
     public void takeDamage(int amount) {
         hp -= amount;
-    }
-
-    public void takeHealing(int amount) {
-        hp += amount;
-        if(hp>maxHp)
-            hp=maxHp;
     }
 
     public void tryToFire() {
@@ -192,6 +180,20 @@ public class Hero {
             if (scoreView > score) {
                 scoreView = score;
             }
+        }
+    }
+
+    public void consume(PowerUp p) {
+        switch (p.getType()) {
+            case MEDKIT: // todo add max hp check
+                hp += p.getPower();
+                break;
+            case AMMOS:
+                currentWeapon.addAmmos(p.getPower());
+                break;
+            case MONEY:
+                money += p.getPower();
+                break;
         }
     }
 }

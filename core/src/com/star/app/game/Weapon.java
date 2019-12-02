@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class Weapon {
-
     private GameController gc;
     private Hero hero;
     private String title;
@@ -21,10 +20,6 @@ public class Weapon {
     //   z - угол смещения вылета пуль относительно направления корабля
     private Vector3[] slots;
 
-    public void setCurBullets(int curBullets) {
-        this.curBullets = curBullets;
-    }
-
     public float getFirePeriod() {
         return firePeriod;
     }
@@ -35,6 +30,13 @@ public class Weapon {
 
     public int getCurBullets() {
         return curBullets;
+    }
+
+    public void addAmmos(int amount) {
+        curBullets += amount;
+        if (curBullets > maxBullets) {
+            curBullets = maxBullets;
+        }
     }
 
     public Weapon(GameController gc, Hero hero, String title, float firePeriod, int damage, float bulletSpeed, int maxBullets, Vector3[] slots) {

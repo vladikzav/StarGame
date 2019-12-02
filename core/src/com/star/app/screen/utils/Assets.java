@@ -35,11 +35,14 @@ public class Assets {
 
     public void loadAssets(ScreenManager.ScreenType type) {
         switch (type) {
+            case MENU:
+                assetManager.load("images/game.pack", TextureAtlas.class);
+                createStandardFont(72);
+                createStandardFont(24);
+                break;
             case GAME:
                 assetManager.load("images/game.pack", TextureAtlas.class);
                 createStandardFont(32);
-                assetManager.finishLoading();
-                textureAtlas = assetManager.get("images/game.pack", TextureAtlas.class);
                 break;
         }
     }
@@ -58,9 +61,9 @@ public class Assets {
         assetManager.load("fonts/font" + size + ".ttf", BitmapFont.class, fontParameter);
     }
 
-//    public void makeLinks() {
-//        textureAtlas = assetManager.get("images/game.pack", TextureAtlas.class);
-//    }
+    public void makeLinks() {
+        textureAtlas = assetManager.get("images/game.pack", TextureAtlas.class);
+    }
 
     public void clear() {
         assetManager.clear();
