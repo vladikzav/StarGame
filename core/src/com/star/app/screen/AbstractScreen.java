@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public abstract class AbstractScreen implements Screen {
     protected SpriteBatch batch;
 
+
     public AbstractScreen(SpriteBatch batch) {
         this.batch = batch;
     }

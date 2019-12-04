@@ -35,4 +35,18 @@ public class OptionsUtils {
             e.printStackTrace();
         }
     }
+
+    public static void saveProperties(int forward, int backward, int right, int left, int fire){
+        try {
+            Properties properties = new Properties();
+            properties.put("PLAYER1_FORWARD", String.valueOf(forward));
+            properties.put("PLAYER1_LEFT", String.valueOf(left));
+            properties.put("PLAYER1_RIGHT", String.valueOf(right));
+            properties.put("PLAYER1_BACKWARD", String.valueOf(backward));
+            properties.put("PLAYER1_FIRE", String.valueOf(fire));
+            properties.store(Gdx.files.local("options.properties").write(false), null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

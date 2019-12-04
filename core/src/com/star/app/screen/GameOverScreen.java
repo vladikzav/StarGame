@@ -14,13 +14,14 @@ import com.star.app.game.Background;
 import com.star.app.screen.utils.Assets;
 import com.star.app.screen.utils.OptionsUtils;
 
-public class MenuScreen extends AbstractScreen {
+public class GameOverScreen extends AbstractScreen{
     private Background background;
     private BitmapFont font72;
     private BitmapFont font24;
     private Stage stage;
 
-    public MenuScreen(SpriteBatch batch) {
+
+    public GameOverScreen(SpriteBatch batch) {
         super(batch);
     }
 
@@ -41,25 +42,15 @@ public class MenuScreen extends AbstractScreen {
         textButtonStyle.font = font24;
         skin.add("simpleSkin", textButtonStyle);
 
-        Button btnNewGame = new TextButton("New Game", textButtonStyle);
-        Button btnOptions = new TextButton("Options", textButtonStyle);
+        Button btnMenu = new TextButton("Return to Menu", textButtonStyle);
         Button btnExitGame = new TextButton("Exit Game", textButtonStyle);
-
-        btnNewGame.setPosition(480, 310);
-        btnOptions.setPosition(480,210);
+        btnMenu.setPosition(480, 210);
         btnExitGame.setPosition(480, 110);
 
-        btnNewGame.addListener(new ChangeListener() {
+        btnMenu.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME);
-            }
-        });
-
-        btnOptions.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.OPTIONS);
+                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.MENU);
             }
         });
 
@@ -70,14 +61,10 @@ public class MenuScreen extends AbstractScreen {
             }
         });
 
-        stage.addActor(btnNewGame);
-        stage.addActor(btnOptions);
+        stage.addActor(btnMenu);
         stage.addActor(btnExitGame);
         skin.dispose();
 
-        if (!OptionsUtils.isOptionsExists()) {
-            OptionsUtils.createDefaultProperties();
-        }
     }
 
     public void update(float dt) {
@@ -92,10 +79,12 @@ public class MenuScreen extends AbstractScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         background.render(batch);
-        font72.draw(batch, "Star Game 2019", 0, 600, 1280, 1, false);
+        font72.draw(batch, "GAME OVER", 0, 600, 1280, 1, false);
+        font72.draw(batch, "SCORE:" + ScreenManager.getInstance().getGame().getScore(),0, 520, 1280, 1, false);
         batch.end();
         stage.draw();
     }
+
 
     @Override
     public void dispose() {

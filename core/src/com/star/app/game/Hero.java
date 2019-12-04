@@ -1,7 +1,6 @@
 package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,9 +12,6 @@ import com.badlogic.gdx.utils.StringBuilder;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 import com.star.app.screen.utils.OptionsUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Hero {
     private GameController gc;
@@ -142,6 +138,10 @@ public class Hero {
 
     public void takeDamage(int amount) {
         hp -= amount;
+        if(hp<=0){
+            ScreenManager.getInstance().getGame().setScore(score);
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.OVER);
+        }
     }
 
     public void tryToFire() {

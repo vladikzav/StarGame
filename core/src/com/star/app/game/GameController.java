@@ -1,8 +1,9 @@
 package com.star.app.game;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.star.app.screen.ScreenManager;
 
 public class GameController {
@@ -13,6 +14,7 @@ public class GameController {
     private PowerUpsController powerUpsController;
     private Hero hero;
     private Vector2 tmpVec;
+    private Stage stage;
 
     public AsteroidController getAsteroidController() {
         return asteroidController;
@@ -38,6 +40,14 @@ public class GameController {
         return hero;
     }
 
+    public Stage getStage(){
+        return stage;
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
     public GameController() {
         this.background = new Background(this);
         this.hero = new Hero(this, "PLAYER1");
@@ -60,7 +70,14 @@ public class GameController {
         particleController.update(dt);
         powerUpsController.update(dt);
         checkCollisions();
+        stage.act(dt);
     }
+
+    public void updatePause(float dt) {
+        background.update(dt);
+        stage.act(dt);
+    }
+
 
     public void checkCollisions() {
         for (int i = 0; i < asteroidController.getActiveList().size(); i++) {

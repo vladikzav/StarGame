@@ -7,11 +7,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.star.app.StarGame;
+import com.star.app.game.GameController;
 import com.star.app.screen.utils.Assets;
 
 public class ScreenManager {
     public enum ScreenType {
-        MENU, GAME
+        MENU, GAME, OVER, OPTIONS
     }
 
     public static final int SCREEN_WIDTH = 1280;
@@ -24,9 +25,15 @@ public class ScreenManager {
     private LoadingScreen loadingScreen;
     private GameScreen gameScreen;
     private MenuScreen menuScreen;
+    private GameOverScreen gameOverScreen;
+    private OptionsScreen optionsScreen;
     private Screen targetScreen;
     private Viewport viewport;
     private Camera camera;
+
+    private ScreenManager() {
+
+    }
 
     private static ScreenManager ourInstance = new ScreenManager();
 
@@ -42,8 +49,6 @@ public class ScreenManager {
         return camera;
     }
 
-    private ScreenManager() {
-    }
 
     public void init(StarGame game, SpriteBatch batch) {
         this.game = game;
@@ -52,8 +57,15 @@ public class ScreenManager {
         this.viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT, camera);
         this.gameScreen = new GameScreen(batch);
         this.menuScreen = new MenuScreen(batch);
+        this.gameOverScreen = new GameOverScreen(batch);
+        this.optionsScreen = new OptionsScreen(batch);
         this.loadingScreen = new LoadingScreen(batch);
     }
+
+    public StarGame getGame(){
+        return game;
+    }
+
 
     public void resize(int width, int height) {
         viewport.update(width, height);
@@ -83,8 +95,16 @@ public class ScreenManager {
                 targetScreen = menuScreen;
                 Assets.getInstance().loadAssets(ScreenType.MENU);
                 break;
+            case OVER:
+                targetScreen = gameOverScreen;
+                Assets.getInstance().loadAssets(ScreenType.OVER);
+                break;
+            case OPTIONS:
+                targetScreen = optionsScreen;
+                Assets.getInstance().loadAssets(ScreenType.OPTIONS);
         }
     }
+
 
     public void goToTarget() {
         game.setScreen(targetScreen);
