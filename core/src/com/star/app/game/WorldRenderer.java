@@ -68,6 +68,15 @@ public class WorldRenderer {
         skin.dispose();
     }
 
+    public void levelChange(){
+        if(gc.isNewLevel()){
+            strBuilder.clear();
+            strBuilder.append("Level: " + gc.getLevel());
+            font72.draw(batch, strBuilder, ScreenManager.HALF_SCREEN_WIDTH-80, ScreenManager.HALF_SCREEN_HEIGHT);
+        }
+    }
+
+
     public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -79,6 +88,7 @@ public class WorldRenderer {
         gc.getPowerUpsController().render(batch);
         gc.getParticleController().render(batch);
         gc.getHero().renderGUI(batch, font32);
+        levelChange();
         batch.end();
         gc.getStage().draw();
     }

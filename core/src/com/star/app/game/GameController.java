@@ -15,6 +15,17 @@ public class GameController {
     private Hero hero;
     private Vector2 tmpVec;
     private Stage stage;
+    private int level;
+    private boolean isNewLevel;
+    private float showLevel;
+
+    public int getLevel() {
+        return level;
+    }
+
+    public boolean isNewLevel() {
+        return isNewLevel;
+    }
 
     public AsteroidController getAsteroidController() {
         return asteroidController;
@@ -56,10 +67,8 @@ public class GameController {
         this.particleController = new ParticleController();
         this.powerUpsController = new PowerUpsController(this);
         this.tmpVec = new Vector2(0.0f, 0.0f);
-        for (int i = 0; i < 2; i++) {
-            this.asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH), MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
-                    MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), 1.0f);
-        }
+        this.level = 0;
+        this.isNewLevel = false;
     }
 
     public void update(float dt) {
@@ -69,7 +78,10 @@ public class GameController {
         bulletController.update(dt);
         particleController.update(dt);
         powerUpsController.update(dt);
+        showLevelTimer(dt);
+        gameLevelUpdate();
         checkCollisions();
+        powerUpsGetter();
         stage.act(dt);
     }
 
@@ -78,6 +90,36 @@ public class GameController {
         stage.act(dt);
     }
 
+    public void showLevelTimer(float dt){
+        showLevel+=dt;
+        if (showLevel > 1.5f) {
+            showLevel = 0.0f;
+            isNewLevel=false;
+        }
+    }
+
+    public void gameLevelUpdate(){
+        if(asteroidController.getActiveList().size()==0){
+            isNewLevel=true;
+            level++;
+            for (int i = 0; i < 2; i++) {
+                this.asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH), MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
+                        MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), 1.0f);
+            }
+        }
+    }
+
+    public void powerUpsGetter(){
+        for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
+            PowerUp p = powerUpsController.getActiveList().get(i);
+            hero.getHitArea().radius = hero.getHitArea().radius*8;
+            if(hero.getHitArea().contains(p.getPosition())){
+                tmpVec.set(hero.getPosition()).sub(p.getPosition()).nor();
+                p.getVelocity().mulAdd(tmpVec, 50.0f);
+            }
+            hero.getHitArea().radius = hero.getHitArea().radius/8;
+        }
+    }
 
     public void checkCollisions() {
         for (int i = 0; i < asteroidController.getActiveList().size(); i++) {
