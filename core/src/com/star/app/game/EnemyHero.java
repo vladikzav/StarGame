@@ -103,7 +103,7 @@ public void targeting(float dt, float angle){
         if (Math.abs(this.angle - angle) < Math.abs(rotateSpeed * dt)) {
             this.angle = angle;
         }
-        if(Math.abs(this.angle-angle)<= 20) {
+        if(Math.abs(this.angle-angle)<= 20 && gc.getHero().getPosition().dst(this.getPosition())<=500) {
             tryToShoot = true;
         } else
         tryToShoot = false;
