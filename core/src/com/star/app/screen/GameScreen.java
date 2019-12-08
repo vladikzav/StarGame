@@ -25,13 +25,12 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void render(float delta) {
+        worldRenderer.render();
         switch(state){
             case Running:
-                worldRenderer.render();
                 gameController.update(delta);
                 break;
             case Paused:
-                worldRenderer.render();
                 worldRenderer.renderPause();
                 gameController.updatePause(delta);
                 break;

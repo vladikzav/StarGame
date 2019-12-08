@@ -191,6 +191,16 @@ public class Hero {
                 batch.draw(starTexture, mapX + tmpVector.x - 16, mapY + tmpVector.y - 16, 32, 32);
             }
         }
+        batch.setColor(Color.BLUE);
+        for (int i = 0; i < gc.getEnemyHeroController().getActiveList().size(); i++) {
+            EnemyHero e = gc.getEnemyHeroController().getActiveList().get(i);
+            float dst = position.dst(e.getPosition());
+            if (dst < 3000.0f) {
+                tmpVector.set(e.getPosition()).sub(this.position);
+                tmpVector.scl(160.0f / 3000.0f);
+                batch.draw(starTexture, mapX + tmpVector.x - 16, mapY + tmpVector.y - 16, 32, 32);
+            }
+        }
 
         batch.setColor(Color.WHITE);
         for (int i = 0; i < 120; i++) {

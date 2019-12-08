@@ -113,8 +113,10 @@ public class WorldRenderer {
 
         batch.begin();
         gc.getHero().render(batch);
+        gc.getEnemyHeroController().render(batch);
         gc.getAsteroidController().render(batch);
         gc.getBulletController().render(batch);
+        gc.getEnemyBulletController().render(batch);
         gc.getPowerUpsController().render(batch);
         gc.getParticleController().render(batch);
         batch.end();
