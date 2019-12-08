@@ -7,7 +7,7 @@ import com.star.app.screen.ScreenManager;
 
 public class PowerUp implements Poolable {
     public enum Type {
-        MEDKIT(0), MONEY(1), AMMOS(2);
+        MONEY(0), AMMOS(1), MEDKIT(2);
 
         int index;
 

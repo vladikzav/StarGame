@@ -4,8 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.star.app.screen.GameScreen;
 import com.star.app.screen.ScreenManager;
-
 
 public class StarGame extends Game {
     private SpriteBatch batch;
@@ -14,12 +14,7 @@ public class StarGame extends Game {
 
     // Домашнее задание:
     // 1. Разбор кода
-    // 2. Кнопка паузы и выхода в меню на игровом экране
-    // 3. Сделайте Game Over Screen. Если у корабля < 0 HP, то игра +
-    // переходит на Game Over Screen, и отображает там статистику игры +
-    // (допустим пока только счет). По нажатию на экране Game Over Screen'а +
-    // возвращаемся в меню +
-    // 4. * Настройки со сменой управления
+    // 2. Добавить бота, уровень его мозгов выбирайте по желанию
 
     @Override
     public void create() {

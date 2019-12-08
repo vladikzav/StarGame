@@ -83,7 +83,10 @@ public class Asteroid implements Poolable {
     public void activate(float x, float y, float vx, float vy, float scale) {
         this.position.set(x, y);
         this.velocity.set(vx, vy);
-        this.hpMax = (int) (10 * scale+gc.getLevel());
+        if (this.velocity.len() < 50.0f) {
+            this.velocity.nor().scl(50.0f);
+        }
+        this.hpMax = (int) ((10 + gc.getLevel() * 4) * scale);
         this.hp = this.hpMax;
         this.angle = MathUtils.random(0.0f, 360.0f);
         this.hitArea.setPosition(position);
@@ -95,21 +98,33 @@ public class Asteroid implements Poolable {
 
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x - 128, position.y - 128, 128, 128, 256, 256, scale, scale, angle);
+        if(position.x > GameController.SPACE_WIDTH - ScreenManager.HALF_SCREEN_WIDTH) {
+            batch.draw(texture, position.x - 128 - GameController.SPACE_WIDTH, position.y - 128, 128, 128, 256, 256, scale, scale, angle);
+        }
+        if(position.x < ScreenManager.HALF_SCREEN_WIDTH) {
+            batch.draw(texture, position.x - 128 + GameController.SPACE_WIDTH, position.y - 128, 128, 128, 256, 256, scale, scale, angle);
+        }
+        if(position.y > GameController.SPACE_HEIGHT - ScreenManager.HALF_SCREEN_HEIGHT) {
+            batch.draw(texture, position.x - 128, position.y - 128 - GameController.SPACE_HEIGHT, 128, 128, 256, 256, scale, scale, angle);
+        }
+        if(position.y < ScreenManager.HALF_SCREEN_HEIGHT) {
+            batch.draw(texture, position.x - 128, position.y - 128 + GameController.SPACE_HEIGHT, 128, 128, 256, 256, scale, scale, angle);
+        }
     }
 
     public void update(float dt) {
         position.mulAdd(velocity, dt);
         angle += rotationSpeed * dt;
         if (position.x < -BASE_RADIUS * scale) {
-            position.x = ScreenManager.SCREEN_WIDTH + BASE_RADIUS * scale;
+            position.x = GameController.SPACE_WIDTH + BASE_RADIUS * scale;
         }
-        if (position.x > ScreenManager.SCREEN_WIDTH + BASE_RADIUS * scale) {
+        if (position.x > GameController.SPACE_WIDTH + BASE_RADIUS * scale) {
             position.x = -BASE_RADIUS * scale;
         }
         if (position.y < -BASE_RADIUS * scale) {
-            position.y = ScreenManager.SCREEN_HEIGHT + BASE_RADIUS * scale;
+            position.y = GameController.SPACE_HEIGHT + BASE_RADIUS * scale;
         }
-        if (position.y > ScreenManager.SCREEN_HEIGHT + BASE_RADIUS * scale) {
+        if (position.y > GameController.SPACE_HEIGHT + BASE_RADIUS * scale) {
             position.y = -BASE_RADIUS * scale;
         }
         hitArea.setPosition(position);

@@ -1,12 +1,23 @@
 package com.star.app.game;
 
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.star.app.screen.ScreenManager;
+import com.star.app.screen.utils.Assets;
+
+import static java.lang.Math.*;
 
 public class GameController {
+    public static final int SPACE_WIDTH = 9600;
+    public static final int SPACE_HEIGHT = 5400;
+
+    private Music music;
+    private int level;
     private Background background;
     private AsteroidController asteroidController;
     private BulletController bulletController;
@@ -15,7 +26,6 @@ public class GameController {
     private Hero hero;
     private Vector2 tmpVec;
     private Stage stage;
-    private int level;
     private boolean isNewLevel;
     private float showLevel;
 
@@ -69,11 +79,14 @@ public class GameController {
         this.tmpVec = new Vector2(0.0f, 0.0f);
         this.level = 0;
         this.isNewLevel = false;
+		this.music = Assets.getInstance().getAssetManager().get("audio/Music.mp3");
+        this.music.setLooping(true);
+        this.music.play();
     }
 
     public void update(float dt) {
-        background.update(dt);
         hero.update(dt);
+        background.update(dt);
         asteroidController.update(dt);
         bulletController.update(dt);
         particleController.update(dt);
@@ -175,7 +188,7 @@ public class GameController {
             PowerUp p = powerUpsController.getActiveList().get(i);
             if (hero.getHitArea().contains(p.getPosition())) {
                 hero.consume(p);
-                particleController.getEffectBuilder().takePowerUpEffect(p.getPosition().x, p.getPosition().y);
+                particleController.getEffectBuilder().takePowerUpEffect(p.getPosition().x, p.getPosition().y, p.getType().index);
                 p.deactivate();
             }
         }

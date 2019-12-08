@@ -1,7 +1,9 @@
 package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -10,6 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.star.app.screen.GameScreen;
 import com.star.app.screen.ScreenManager;
@@ -25,6 +31,11 @@ public class WorldRenderer {
     private Stage stage;
     private StringBuilder strBuilder;
     private GameScreen gameScreen;
+    private Camera camera;
+
+    private FrameBuffer frameBuffer;
+    private TextureRegion frameBufferRegion;
+    private ShaderProgram shaderProgram;
 
 
 
@@ -36,6 +47,15 @@ public class WorldRenderer {
         this.font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf", BitmapFont.class);
         this.font72 = Assets.getInstance().getAssetManager().get("fonts/font72.ttf", BitmapFont.class);
         this.strBuilder = new StringBuilder();
+
+        this.frameBuffer = new FrameBuffer(Pixmap.Format.RGB888, ScreenManager.SCREEN_WIDTH, ScreenManager.SCREEN_HEIGHT, false);
+        this.frameBufferRegion = new TextureRegion(frameBuffer.getColorBufferTexture());
+        this.frameBufferRegion.flip(false, true);
+        this.shaderProgram = new ShaderProgram(Gdx.files.internal("shaders/vertex.glsl").readString(), Gdx.files.internal("shaders/fragment.glsl").readString());
+        if (!shaderProgram.isCompiled()) {
+            throw new IllegalArgumentException("Error compiling shader: " + shaderProgram.getLog());
+        }
+        this.camera = ScreenManager.getInstance().getCamera();
         this.gameScreen = gameScreen;
         stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
         Gdx.input.setInputProcessor(stage);
@@ -63,6 +83,7 @@ public class WorldRenderer {
             }
         });
 
+        stage.addActor(gc.getHero().getShop());
         stage.addActor(btnPause);
         gc.setStage(stage);
         skin.dispose();
@@ -78,23 +99,55 @@ public class WorldRenderer {
 
 
     public void render() {
+        frameBuffer.begin();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         batch.begin();
         gc.getBackground().render(batch);
+        batch.end();
+
+        camera.position.set(gc.getHero().getPosition().x, gc.getHero().getPosition().y, 0.0f);
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+
+        batch.begin();
         gc.getHero().render(batch);
         gc.getAsteroidController().render(batch);
         gc.getBulletController().render(batch);
         gc.getPowerUpsController().render(batch);
         gc.getParticleController().render(batch);
+        batch.end();
+        frameBuffer.end();
+
+        camera.position.set(ScreenManager.HALF_SCREEN_WIDTH, ScreenManager.HALF_SCREEN_HEIGHT, 0.0f);
+        camera.update();
+        ScreenManager.getInstance().getViewport().apply();
+        batch.setProjectionMatrix(camera.combined);
+
+        batch.begin();
+//        batch.setShader(shaderProgram);
+//        shaderProgram.setUniformf("px", gc.getHero().getPosition().x / ScreenManager.SCREEN_WIDTH);
+//        shaderProgram.setUniformf("py", gc.getHero().getPosition().y / ScreenManager.SCREEN_HEIGHT);
+
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.draw(frameBufferRegion, 0, 0);
+        batch.end();
+//        batch.setShader(null);
+
+        //Interfaces
+        batch.begin();
         gc.getHero().renderGUI(batch, font32);
         levelChange();
         batch.end();
+
         gc.getStage().draw();
     }
 
     public void renderPause(){
         batch.begin();
+        gc.getHero().renderGUI(batch, font32);
         strBuilder.clear();
         strBuilder.append("PAUSE");
         font72.draw(batch, strBuilder, ScreenManager.HALF_SCREEN_WIDTH-80, ScreenManager.HALF_SCREEN_HEIGHT);

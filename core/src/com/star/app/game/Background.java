@@ -23,8 +23,8 @@ public class Background {
 
         public void update(float dt) {
             if(gc != null) {
-                position.x += (velocity.x - gc.getHero().getVelocity().x / 10.0f) * dt;
-                position.y += (velocity.y - gc.getHero().getVelocity().y / 10.0f) * dt;
+                position.x += (velocity.x - gc.getHero().getVelocity().x / 4.0f) * dt;
+                position.y += (velocity.y - gc.getHero().getVelocity().y / 4.0f) * dt;
             } else {
                 position.mulAdd(velocity, dt);
             }
@@ -45,7 +45,7 @@ public class Background {
 
     public Background(GameController gc) {
         this.gc = gc;
-        this.textureCosmos = new Texture("images/bg.png");
+        this.textureCosmos = new Texture("images/back1920.jpg");
         this.textureStar = Assets.getInstance().getAtlas().findRegion("star16");
         this.stars = new Star[STARS_COUNT];
         for (int i = 0; i < stars.length; i++) {

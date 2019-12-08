@@ -1,5 +1,6 @@
 package com.star.app.screen;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -15,9 +16,9 @@ public class ScreenManager {
         MENU, GAME, OVER, OPTIONS
     }
 
-    public static final int SCREEN_WIDTH = 1280;
+    public static final int SCREEN_WIDTH = 1920;
     public static final int HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2;
-    public static final int SCREEN_HEIGHT = 720;
+    public static final int SCREEN_HEIGHT = 1080;
     public static final int HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2;
 
     private StarGame game;
@@ -30,10 +31,6 @@ public class ScreenManager {
     private Screen targetScreen;
     private Viewport viewport;
     private Camera camera;
-
-    private ScreenManager() {
-
-    }
 
     private static ScreenManager ourInstance = new ScreenManager();
 
@@ -49,6 +46,8 @@ public class ScreenManager {
         return camera;
     }
 
+    private ScreenManager() {
+    }
 
     public void init(StarGame game, SpriteBatch batch) {
         this.game = game;

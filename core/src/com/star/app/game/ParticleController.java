@@ -17,11 +17,29 @@ public class ParticleController extends ObjectPool<Particle> {
             }
         }
 
-        public void takePowerUpEffect(float x, float y) {
-            for (int i = 0; i < 16; i++) {
-                float angle = 6.28f / 16.0f * i;
-                setup(x, y, (float) Math.cos(angle) * 100.0f, (float) Math.sin(angle) * 100.0f, 0.8f, 3.0f, 2.8f, 0, 1, 0, 1, 1, 1, 0, 0.4f);
+        public void takePowerUpEffect(float x, float y, int index) {
+            // MONEY(0) blue, AMMOS(1) red, MEDKIT(2) green;
+            switch (index) {
+                case 0:
+                    for (int i = 0; i < 16; i++) {
+                        float angle = 6.28f / 16.0f * i;
+                        setup(x, y, (float) Math.cos(angle) * 100.0f, (float) Math.sin(angle) * 100.0f, 0.8f, 3.0f, 2.8f, 0, 0, 1, 1, 1, 1, 0, 0.4f);
+                    }
+                    break;
+                case 1:
+                    for (int i = 0; i < 8; i++) {
+                        float angle = 6.28f / 8.0f * i;
+                        setup(x, y, (float) Math.cos(angle) * 100.0f, (float) Math.sin(angle) * 100.0f, 0.8f, 3.0f, 2.8f, 1, 0, 0, 1, 1, 1, 0, 0.4f);
+                    }
+                    break;
+                case 2:
+                    for (int i = 0; i < 24; i++) {
+                        float angle = 6.28f / 24.0f * i;
+                        setup(x, y, (float) Math.cos(angle) * 100.0f, (float) Math.sin(angle) * 100.0f, 0.8f, 3.0f, 2.8f, 0, 1, 0, 1, 1, 1, 0, 0.4f);
+                    }
+                    break;
             }
+
         }
     }
 
