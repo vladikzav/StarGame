@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.star.app.screen.GameScreen;
@@ -30,7 +31,9 @@ public class WorldRenderer {
     private BitmapFont font72;
     private Stage stage;
     private StringBuilder strBuilder;
-    private GameScreen gameScreen;
+    private Vector2 tmpVector;
+	private GameScreen gameScreen;
+
     private Camera camera;
 
     private FrameBuffer frameBuffer;
@@ -47,6 +50,7 @@ public class WorldRenderer {
         this.font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf", BitmapFont.class);
         this.font72 = Assets.getInstance().getAssetManager().get("fonts/font72.ttf", BitmapFont.class);
         this.strBuilder = new StringBuilder();
+        this.tmpVector = new Vector2();
 
         this.frameBuffer = new FrameBuffer(Pixmap.Format.RGB888, ScreenManager.SCREEN_WIDTH, ScreenManager.SCREEN_HEIGHT, false);
         this.frameBufferRegion = new TextureRegion(frameBuffer.getColorBufferTexture());
@@ -113,12 +117,14 @@ public class WorldRenderer {
 
         batch.begin();
         gc.getHero().render(batch);
-        gc.getEnemyHeroController().render(batch);
+        if (gc.getBot().isAlive()) {
+            gc.getBot().render(batch);
+        }
         gc.getAsteroidController().render(batch);
         gc.getBulletController().render(batch);
-        gc.getEnemyBulletController().render(batch);
         gc.getPowerUpsController().render(batch);
         gc.getParticleController().render(batch);
+        gc.getInfoController().render(batch, font32);
         batch.end();
         frameBuffer.end();
 
@@ -128,15 +134,19 @@ public class WorldRenderer {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-//        batch.setShader(shaderProgram);
-//        shaderProgram.setUniformf("px", gc.getHero().getPosition().x / ScreenManager.SCREEN_WIDTH);
-//        shaderProgram.setUniformf("py", gc.getHero().getPosition().y / ScreenManager.SCREEN_HEIGHT);
+
+//        tmpVector.set(gc.getHero().getPosition());
+//        ScreenManager.getInstance().getViewport().project(tmpVector);
+
+        batch.setShader(shaderProgram);
+        shaderProgram.setUniformf("px", 0.5f);
+        shaderProgram.setUniformf("py", 0.5f);
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.draw(frameBufferRegion, 0, 0);
         batch.end();
-//        batch.setShader(null);
+        batch.setShader(null);
 
         //Interfaces
         batch.begin();

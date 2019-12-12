@@ -34,6 +34,15 @@ public class Background {
                 velocity.x = MathUtils.random(-15, -1);
                 scale = Math.abs(velocity.x) / 15.0f * 0.7f;
             }
+            if (position.y < -200) {
+                position.y = ScreenManager.SCREEN_HEIGHT + 200;
+            }
+            if (position.y > ScreenManager.SCREEN_HEIGHT + 200) {
+                position.y = -200;
+            }
+            if (position.x > ScreenManager.SCREEN_WIDTH + 200) {
+                position.x = -200;
+            }
         }
     }
 

@@ -14,7 +14,6 @@ public class StarGame extends Game {
 
     // Домашнее задание:
     // 1. Разбор кода
-    // 2. Добавить бота, уровень его мозгов выбирайте по желанию
 
     @Override
     public void create() {

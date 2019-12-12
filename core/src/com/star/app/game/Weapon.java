@@ -8,14 +8,17 @@ import com.star.app.screen.utils.Assets;
 
 public class Weapon {
     private GameController gc;
-    private Hero hero;
+    private Ship ship;
     private String title;
     private float firePeriod;
-    private int damage;
+    private int minDamage;
+    private int maxDamage;
     private float bulletSpeed;
     private int maxBullets;
     private int curBullets;
+    private float radius;
     private Sound shootSound;
+    private float fireTimer;
 
     // Когда мы описываем слот Vector3[] slots:
     //   x - это то на сколько пикселей он смещен относительно центра
@@ -35,6 +38,14 @@ public class Weapon {
         return curBullets;
     }
 
+    public float getRadius() {
+        return radius;
+    }
+
+    public int getRandomDamage() {
+        return MathUtils.random(minDamage, maxDamage);
+    }
+
     public void addAmmos(int amount) {
         curBullets += amount;
         if (curBullets > maxBullets) {
@@ -42,12 +53,14 @@ public class Weapon {
         }
     }
 
-    public Weapon(GameController gc, Hero hero, String title, float firePeriod, int damage, float bulletSpeed, int maxBullets, Vector3[] slots) {
+    public Weapon(GameController gc, Ship ship, String title, float firePeriod, int minDamage, int maxDamage, float radius, float bulletSpeed, int maxBullets, Vector3[] slots) {
         this.gc = gc;
-        this.hero = hero;
+        this.ship = ship;
         this.title = title;
         this.firePeriod = firePeriod;
-        this.damage = damage;
+        this.minDamage = minDamage;
+        this.maxDamage = maxDamage;
+        this.radius = radius;
         this.bulletSpeed = bulletSpeed;
         this.maxBullets = maxBullets;
         this.curBullets = this.maxBullets;
@@ -55,18 +68,23 @@ public class Weapon {
         this.shootSound = Assets.getInstance().getAssetManager().get("audio/Shoot.mp3");
     }
 
-    public void fire() {
-        if (curBullets > 0) {
+    public void update(float dt) {
+        fireTimer += dt;
+    }
+
+    public void tryToFire() {
+        if (fireTimer > firePeriod && (curBullets > 0 || maxBullets == -1)) {
+            fireTimer = 0;
             curBullets--;
-            shootSound.play();
+            // shootSound.play();
 
             for (int i = 0; i < slots.length; i++) {
                 float x, y, vx, vy;
-                x = hero.getPosition().x + slots[i].x * MathUtils.cosDeg(hero.getAngle() + slots[i].y);
-                y = hero.getPosition().y + slots[i].x * MathUtils.sinDeg(hero.getAngle() + slots[i].y);
-                vx = hero.getVelocity().x + bulletSpeed * MathUtils.cosDeg(hero.getAngle() + slots[i].z);
-                vy = hero.getVelocity().y + bulletSpeed * MathUtils.sinDeg(hero.getAngle() + slots[i].z);
-                gc.getBulletController().setup(x, y, vx, vy, hero.getAngle() + slots[i].z);
+                x = ship.getPosition().x + slots[i].x * MathUtils.cosDeg(ship.getAngle() + slots[i].y);
+                y = ship.getPosition().y + slots[i].x * MathUtils.sinDeg(ship.getAngle() + slots[i].y);
+                vx = ship.getVelocity().x + bulletSpeed * MathUtils.cosDeg(ship.getAngle() + slots[i].z);
+                vy = ship.getVelocity().y + bulletSpeed * MathUtils.sinDeg(ship.getAngle() + slots[i].z);
+                gc.getBulletController().setup(ship, title, x, y, vx, vy, getRandomDamage(),ship.getAngle() + slots[i].z, radius);
             }
         }
     }

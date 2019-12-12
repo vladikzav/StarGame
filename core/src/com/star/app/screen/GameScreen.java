@@ -19,23 +19,14 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void show() {
         Assets.getInstance().loadAssets(ScreenManager.ScreenType.GAME);
-        this.gameController = new GameController();
-        this.worldRenderer = new WorldRenderer(gameController, batch,this);
+        this.gameController = new GameController(batch);
+        this.worldRenderer = new WorldRenderer(gameController, batch, this);
     }
 
     @Override
     public void render(float delta) {
+        gameController.update(delta);
         worldRenderer.render();
-        switch(state){
-            case Running:
-                gameController.update(delta);
-                break;
-            case Paused:
-                worldRenderer.renderPause();
-                gameController.updatePause(delta);
-                break;
-        }
-
     }
 
     public void setState(State state){
