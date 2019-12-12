@@ -40,6 +40,8 @@ public class GameController {
     private boolean isNewLevel;
     private float showLevel;
 	private StringBuilder tmpStr;
+	private float timeShift;
+	private float timeShiftProgress;
 
     ///////////////////////////////////////////////////////////////////////////////////////
     //Getters
@@ -49,6 +51,17 @@ public class GameController {
         return bot;
     }
 
+    public float getTimeShiftProgress() {
+        return timeShiftProgress;
+    }
+
+    public void setTimeShiftProgress(float timeShiftProgress) {
+        this.timeShiftProgress = timeShiftProgress;
+    }
+
+    public void setTimeShift(float timeShift) {
+        this.timeShift = timeShift;
+    }
 
     public int getLevel() {
         return level;
@@ -112,6 +125,8 @@ public class GameController {
         this.isNewLevel = false;
 		this.music = Assets.getInstance().getAssetManager().get("audio/Music.mp3");
         this.music.setLooping(true);
+        this.timeShift = 1.0f;
+        this.timeShiftProgress = 100.0f;
         this.music.play();
     }
 
@@ -123,16 +138,17 @@ public class GameController {
 
     public void update(float dt) {
         background.update(dt);
-        hero.update(dt);
+        hero.update(dt/timeShift);
+        hero.updateTimeShift(dt);
         if (bot.isAlive()) {
-            bot.update(dt);
+            bot.update(dt/timeShift);
         }
-        asteroidController.update(dt);
-        bulletController.update(dt);
-        particleController.update(dt);
-        powerUpsController.update(dt);
-        infoController.update(dt);
-        checkCollisions(dt);
+        asteroidController.update(dt/timeShift);
+        bulletController.update(dt/timeShift);
+        particleController.update(dt/timeShift);
+        powerUpsController.update(dt/timeShift);
+        infoController.update(dt/timeShift);
+        checkCollisions(dt/timeShift);
 
 //        ScreenManager.getInstance().getCamera().position.set(hero.getPosition().x, hero.getPosition().y, 0.0f);
 //        ScreenManager.getInstance().getCamera().update();
@@ -226,8 +242,6 @@ public class GameController {
 
                 if (a.getHitArea().contains(b.getPosition())) {
                     particleController.getEffectBuilder().bulletCollideWithAsteroid(b.getPosition(), b.getVelocity());
-                    tmpStr.setLength(0);
-                    tmpStr.append(1);
                     b.deactivate();
                     if (a.takeDamage(b.getDamage())) {
                         if (b.getOwner().getOwnerType() == OwnerType.PLAYER) {

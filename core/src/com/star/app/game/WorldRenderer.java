@@ -1,14 +1,13 @@
 package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -39,6 +38,7 @@ public class WorldRenderer {
     private FrameBuffer frameBuffer;
     private TextureRegion frameBufferRegion;
     private ShaderProgram shaderProgram;
+    private Texture texture;
 
 
 
@@ -72,6 +72,7 @@ public class WorldRenderer {
         textButtonStyle.font = font24;
         skin.add("simpleSkin", textButtonStyle);
 
+
         Button btnPause = new TextButton("Pause", textButtonStyle);
 
         btnPause.setPosition(ScreenManager.SCREEN_WIDTH - btnPause.getWidth() - 5, ScreenManager.SCREEN_HEIGHT - btnPause.getHeight() - 5);
@@ -91,6 +92,11 @@ public class WorldRenderer {
         stage.addActor(btnPause);
         gc.setStage(stage);
         skin.dispose();
+        Pixmap pixmap = new Pixmap(300, 20, Pixmap.Format.RGB888);
+        pixmap.setColor(Color.GREEN);
+        pixmap.fill();
+        this.texture = new Texture(pixmap);
+        pixmap.dispose();
     }
 
     public void levelChange(){
@@ -151,6 +157,7 @@ public class WorldRenderer {
         //Interfaces
         batch.begin();
         gc.getHero().renderGUI(batch, font32);
+        batch.draw(texture, 400, ScreenManager.SCREEN_HEIGHT-40, 3 * gc.getTimeShiftProgress(), 20);
         levelChange();
         batch.end();
 

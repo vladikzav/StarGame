@@ -67,6 +67,7 @@ public class Hero extends Ship {
     private Shop shop;
     private StringBuilder tmpStr;
     private float objectCaptureRadius;
+    private float timeShiftTimer;
 
     public float getObjectCaptureRadius() {
         return objectCaptureRadius;
@@ -116,9 +117,11 @@ public class Hero extends Ship {
                         new Vector3(24, -90, 0)
                 }
         );
+        this.timeShiftTimer = 0.0f;
     }
 
     public void renderGUI(SpriteBatch batch, BitmapFont font) {
+
         tmpStr.setLength(0);
         tmpStr.append("SCORE: ").append(scoreView).append("\n");
         tmpStr.append("MONEY: ").append(money).append("\n");
@@ -197,6 +200,24 @@ public class Hero extends Ship {
                         1.0f, 1.0f, 1.0f, 0.0f
                 );
             }
+        }
+    }
+
+    public void updateTimeShift(float dt){
+        timeShiftTimer +=dt;
+        if (timeShiftTimer > 0.2 || gc.getTimeShiftProgress() > 0) {
+            timeShiftTimer = 0;
+            gc.setTimeShift(1.0f);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && gc.getTimeShiftProgress() > 10.0f) {
+            gc.setTimeShift(4.0f);
+            gc.setTimeShiftProgress(gc.getTimeShiftProgress()-dt*10);
+        }
+        if(gc.getTimeShiftProgress()<0){
+            gc.setTimeShiftProgress(0);
+        }
+        if(gc.getTimeShiftProgress()<100.0f){
+            gc.setTimeShiftProgress(gc.getTimeShiftProgress()+dt*4);
         }
     }
 
